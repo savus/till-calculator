@@ -1,0 +1,370 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <style>
+      :root {
+        --size-30: 1.875rem;
+        --size-250: 15.635rem;
+      }
+
+      html {
+        height: 100%;
+      }
+
+      input {
+        width: 200px;
+      }
+
+      input[type="text"] {
+        padding: 10px 0px 10px 15px;
+        outline: none;
+      }
+
+      input[type="submit"] {
+        width: var(--size-250);
+        padding: 10px 15px;
+        border-radius: 5px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        cursor: pointer;
+      }
+
+      .title {
+        margin-bottom: var(--size-30);
+      }
+
+      .name-container {
+        margin-bottom: 30px;
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+      }
+
+      .name-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+      }
+
+      .form-container {
+        max-width: 600px;
+        margin: 0 auto;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+      }
+
+      .input-container {
+        display: flex;
+        gap: 20px;
+        margin-bottom: 10px;
+      }
+
+      .input-container label,
+      .input-container .input-calculation {
+        width: 100px;
+      }
+
+      .button-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-top: 20px;
+      }
+
+      .button-container {
+        width: 100%;
+      }
+
+      .totals-preview {
+        font-size: 20px;
+        text-align: center;
+      }
+
+      .totals-report {
+        display: none;
+      }
+
+      .totals-report .totals-header,
+      .totals-report .report-inner,
+      .totals-report .final-statement {
+        display: flex;
+        justify-content: space-between;
+      }
+
+      .totals-report {
+        flex-direction: column;
+        border: 1px solid black;
+        padding: 10px;
+        width: 621px;
+      }
+
+      .totals-report,
+      .totals-report .totals-header {
+        width: 100%;
+      }
+
+      .totals-header {
+        border-bottom: 3px solid black;
+        padding-bottom: 10px;
+      }
+
+      .totals-report .final-statement {
+        border-top: 3px solid black;
+        padding-top: 10px;
+      }
+
+      .totals-report .report-inner {
+        padding: 5px;
+        width: 100%;
+      }
+
+      .totals-report .report-inner .currency-name,
+      .totals-report .report-inner .currency-quantity,
+      .totals-report .final-statement .userName,
+      .totals-report .final-statement .quantity {
+        width: 207px;
+      }
+
+      .date {
+        font-size: 30px;
+        margin-top: 10px;
+        display: none;
+      }
+
+      @media print {
+        .name-container,
+        .input-fields,
+        .totals-preview,
+        .button-container {
+          display: none;
+        }
+
+        .date,
+        .totals-report {
+          display: block;
+        }
+      }
+    </style>
+    <title>Pen</title>
+  </head>
+  <body>
+    <div class="form-container print-media">
+      <div class="title">Till Calculator</div>
+      <div class="name-container">
+        <div class="name">Name</div>
+        <input type="text" placeholder="type name here" id="name-input" />
+      </div>
+      <form action="/">
+        <div class="input-fields"></div>
+        <div class="totals-preview">$0.00</div>
+        <div class="button-container">
+          <input type="submit" id="calculator-btn" value="Calculate" />
+        </div>
+      </form>
+      <div class="totals-report">
+        <div class="totals-header">
+          <div class="names">Name</div>
+          <div class="quantities">Qty</div>
+          <div class="totals">Total</div>
+        </div>
+        <div class="entries-container"></div>
+
+        <div class="final-statement">
+          <div class="userName">Justin</div>
+          <div class="quantity">15</div>
+          <div class="total">$0.15</div>
+        </div>
+      </div>
+      <div class="date">Sun October 23, 2028</div>
+    </div>
+    <script>
+      const daysOfWeek = [
+        "Sunday",
+        "Monday",
+        "Tuesday",
+        "Wednesday",
+        "Thursday",
+        "Friday",
+        "Saturday",
+      ];
+
+      const months = [
+        "January",
+        "February",
+        "March",
+        "April",
+        "May",
+        "June",
+        "July",
+        "August",
+        "September",
+        "October",
+        "November",
+        "December",
+      ];
+
+      const inputFieldData = [
+        {
+          currencyId: "sacagawea",
+          currencyName: "Sacagawea Gold Coins",
+          denomination: 1.0,
+        },
+        {
+          currencyId: "fifty-cent",
+          currencyName: "Fifty Cent Pieces",
+          denomination: 0.5,
+        },
+        {
+          currencyId: "hundreds",
+          currencyName: "Hundreds",
+          denomination: 100.0,
+        },
+        { currencyId: "fifties", currencyName: "Fifties", denomination: 50.0 },
+        {
+          currencyId: "twenties",
+          currencyName: "Twenties",
+          denomination: 20.0,
+        },
+        { currencyId: "tens", currencyName: "Tens", denomination: 10.0 },
+        { currencyId: "fives", currencyName: "Fives", denomination: 5.0 },
+        { currencyId: "ones", currencyName: "Ones", denomination: 1.0 },
+        {
+          currencyId: "quarters",
+          currencyName: "Quarters",
+          denomination: 0.25,
+        },
+        { currencyId: "dimes", currencyName: "Dimes", denomination: 0.1 },
+        { currencyId: "nickels", currencyName: "Nickels", denomination: 0.05 },
+        { currencyId: "pennies", currencyName: "Pennies", denomination: 0.01 },
+      ];
+
+      function buildInputField(fieldData) {
+        const element = document.createElement("div");
+
+        const htmlString = `<div class="input-container">
+            <label for="${fieldData.currencyId}" class="input-name">${fieldData.currencyName}</label>
+            <input type="text" class="input-field" value="0" id="${fieldData.currencyId}" data-value="${fieldData.denomination}">
+            <div class="input-calculation" data-value="0.00">$0.00</div>
+            </div>`;
+
+        element.insertAdjacentHTML("beforeend", htmlString);
+        return element;
+      }
+
+      function buildReportEntry({ name, quantity, total }) {
+        const element = document.createElement("div");
+        element.className = "report-entry";
+
+        const htmlString = `<div class="report-inner">
+                <div class="currency-name">${name}</div>
+                <div class="currency-quantity">${quantity}</div>
+                <div class="currency-total">$${total}</div>
+                </div>`;
+
+        element.insertAdjacentHTML("beforeend", htmlString);
+        return element;
+      }
+
+      function buildReportData(parentToAppend) {
+        parentToAppend.innerHTML = "";
+        const inputContainers = Array.from(
+          document.querySelectorAll(".input-container"),
+        );
+        const totals = { quantity: 0, values: 0.0 };
+        const userName = finalStatement.querySelector(".userName");
+        const quantity = finalStatement.querySelector(".quantity");
+        const total = finalStatement.querySelector(".total");
+
+        inputContainers.forEach((input) => {
+          const name = input.querySelector(".input-name").innerText;
+          const quantity =
+            input.querySelector(".input-field").value === ""
+              ? "0"
+              : input.querySelector(".input-field").value;
+          const total = input.querySelector(".input-calculation").dataset.value;
+          const entry = buildReportEntry({ name, quantity, total });
+          totals.quantity += parseInt(quantity);
+          totals.values += parseFloat(total);
+          parentToAppend.append(entry);
+        });
+
+        userName.innerText = nameInput.value;
+        quantity.innerText = totals.quantity;
+        total.innerText = `$${totals.values}`;
+      }
+
+      function buildAndAppendAllInputs(data, container) {
+        data.forEach((item) => {
+          const inputField = buildInputField(item);
+          container.append(inputField);
+        });
+      }
+
+      function calculatorOnClickHandler(e) {
+        e.preventDefault();
+        const dateObj = new Date();
+        const allCalculations = document.querySelectorAll(".input-calculation");
+        const totalValues = Array.from(allCalculations).reduce(
+          (total, current) => {
+            return total + parseFloat(current.dataset.value);
+          },
+          0.0,
+        );
+        totalsPreview.innerText = `$${totalValues.toFixed(2)}`;
+        buildReportData(entriesContainer);
+        date.innerText = `${daysOfWeek[dateObj.getDay()]} ${months[dateObj.getMonth()]} ${dateObj.getDay()}, ${dateObj.getFullYear()}`;
+      }
+
+      function getOnlyNumbersFromString(string) {
+        return string.replace(/\D/g, "");
+      }
+
+      function formKeyUpHandler(e) {
+        const dynamicInput = e.target.closest(".input-field");
+        if (dynamicInput) {
+          const sibling = dynamicInput.nextElementSibling;
+          const numbersOnlyString = getOnlyNumbersFromString(e.target.value);
+          const calculatedValue =
+            numbersOnlyString * dynamicInput.dataset.value;
+
+          dynamicInput.value = numbersOnlyString;
+          //   if (dynamicInput.value === "") dynamicInput.value = "0";
+          sibling.innerText = `$${calculatedValue.toFixed(2)}`;
+          sibling.dataset.value = calculatedValue.toFixed(2);
+        }
+      }
+
+      function formKeyDownHandler(e) {
+        if (e.key.length > 1) return;
+        if (e.key < "0" || e.key > "9") e.preventDefault();
+      }
+
+      const nameInput = document.getElementById("name-input");
+
+      const fieldsContainer = document.querySelector(".input-fields");
+
+      fieldsContainer.addEventListener("keyup", formKeyUpHandler);
+
+      fieldsContainer.addEventListener("keydown", formKeyDownHandler);
+
+      const totalsPreview = document.querySelector(".totals-preview");
+
+      const calculatorButton = document.querySelector("#calculator-btn");
+
+      calculatorButton.addEventListener("click", calculatorOnClickHandler);
+
+      const entriesContainer = document.querySelector(".entries-container");
+
+      const finalStatement = document.querySelector(".final-statement");
+
+      const date = document.querySelector(".date");
+
+      buildAndAppendAllInputs(inputFieldData, fieldsContainer);
+    </script>
+  </body>
+</html>
