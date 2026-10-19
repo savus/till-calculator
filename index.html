@@ -9,6 +9,12 @@
         --size-250: 15.635rem;
       }
 
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+      }
+
       html {
         height: 100%;
       }
@@ -85,15 +91,11 @@
         text-align: center;
       }
 
-      .totals-report {
-        display: none;
-      }
-
       .totals-report .totals-header,
       .totals-report .report-inner,
       .totals-report .final-statement {
         display: flex;
-        justify-content: space-between;
+        text-align: center;
       }
 
       .totals-report {
@@ -101,16 +103,16 @@
         border: 1px solid black;
         padding: 10px;
         width: 621px;
-      }
-
-      .totals-report,
-      .totals-report .totals-header {
-        width: 100%;
+        display: none;
       }
 
       .totals-header {
         border-bottom: 3px solid black;
         padding-bottom: 10px;
+      }
+
+      .totals-header > div {
+        width: 214px;
       }
 
       .totals-report .final-statement {
@@ -121,13 +123,24 @@
       .totals-report .report-inner {
         padding: 5px;
         width: 100%;
+        text-align: center;
       }
 
-      .totals-report .report-inner .currency-name,
-      .totals-report .report-inner .currency-quantity,
-      .totals-report .final-statement .userName,
-      .totals-report .final-statement .quantity {
-        width: 207px;
+      .totals-report .report-inner .currency-name {
+        text-align: left;
+      }
+
+      .totals-report .report-inner .currency-total {
+        text-align: right;
+      }
+
+      .totals-report .report-inner > div,
+      .totals-report .final-statement > div {
+        width: 208px;
+      }
+
+      .totals-report .final-statement .userName {
+        text-align: left;
       }
 
       .date {
